@@ -1,0 +1,4 @@
+.ipynb_checkpoints
+src/__pycache__
+models/*
+!models/*_state.pt
