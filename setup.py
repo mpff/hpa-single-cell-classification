@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 setup(
     name='singl',
     packages=find_packages(),
-    version='0.1',
+    version='0.1.0',
     description='Scripts and modules for the HPA Single Cell Classification challenge on Kaggle.',
     author='Manuel Pfeuffer',
     license='BSD-3-Clause',
@@ -12,6 +12,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        compress_dataset=singl.scripts.compress_dataset:main
+        compress_dataset=singl.scripts.compress_dataset:compress_dataset
     '''
 )
