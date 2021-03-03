@@ -12,6 +12,9 @@ from skimage import io
 
 
 def read_ids_from_csv(csv_file):
+    """ Reads a column named 'ID' from csv_file. This function was
+        created to make sure basic I/O works in unit testing.
+    """
     csv = pandas.read_csv(csv_file)
     return csv.ID
 
@@ -35,6 +38,7 @@ def compress_dataset(csv_file, root_dir, output_file):
     """ Runs a data compression script to turn raw images specified by their
         file id in CSV_FILE and located in ROOT_DIR into a compressed .hdf5
         file saved as OUTPUT_FILE.
+
         This significantly speeds up I/O operations on potentially tens of
         thousands of images and helps keep the filesystem clean (having 80k
         individual files in a single directory is generally NOT advisable).

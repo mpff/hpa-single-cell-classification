@@ -55,11 +55,15 @@ class TestCompressDataset(unittest.TestCase):
             self.assertEqual(image.shape, (10, 10, 4))
 
     def test_compress_single_image(self):
+        """ Robustness check. Might be important in the future, when creating
+            predictions for single images.
+        """
         runner = CliRunner()
         with runner.isolated_filesystem():
             save_test_ids_to_test_csv(self.TEST_ID, self.TEST_CSV)
             save_test_images(self.TEST_ID, self.TEST_DIR)
-            result = runner.invoke(compress_dataset, [self.TEST_CSV, self.TEST_DIR, self.TEST_OUTPUT])
+            result = runner.invoke(compress_dataset,
+                                   [self.TEST_CSV, self.TEST_DIR, self.TEST_OUTPUT])
             self.assertEqual(result.exit_code, 0)
             with h5py.File(self.TEST_OUTPUT, "r") as db:
                 image = db[self.TEST_ID]
@@ -70,7 +74,8 @@ class TestCompressDataset(unittest.TestCase):
         with runner.isolated_filesystem():
             save_test_ids_to_test_csv(self.TEST_IDS, self.TEST_CSV)
             save_test_images(self.TEST_IDS, self.TEST_DIR)
-            result = runner.invoke(compress_dataset, [self.TEST_CSV, self.TEST_DIR, self.TEST_OUTPUT])
+            result = runner.invoke(compress_dataset,
+                                   [self.TEST_CSV, self.TEST_DIR, self.TEST_OUTPUT])
             self.assertEqual(result.exit_code, 0)
             with h5py.File(self.TEST_OUTPUT, "r") as db:
                 image = db[self.TEST_IDS[0]]
