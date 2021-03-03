@@ -10,7 +10,7 @@ from singl.scripts.compress_dataset import read_hpa_image
 from singl.scripts.compress_dataset import compress_dataset
 
 
-def save_test_ids_to_test_csv(image_ids, csv_file):
+def create_test_csv_from_ids(image_ids, csv_file):
     with open(csv_file, 'w') as f:
         f.write(f'ID,ImageHeight,ImageWidth,Label')
         if isinstance(image_ids, str):
@@ -19,7 +19,7 @@ def save_test_ids_to_test_csv(image_ids, csv_file):
             f.write(f'\n{iid},10,10,0')
 
 
-def save_test_images(image_ids, root_dir):
+def create_test_images(image_ids, root_dir):
     pathlib.Path(root_dir).mkdir()
     if isinstance(image_ids, str):
         image_ids = [image_ids]
@@ -43,25 +43,22 @@ class TestCompressDataset(unittest.TestCase):
     def test_read_ids_from_csv(self):
         runner = CliRunner()
         with runner.isolated_filesystem():
-            save_test_ids_to_test_csv(self.TEST_ID, self.TEST_CSV)
+            create_test_csv_from_ids(self.TEST_ID, self.TEST_CSV)
             ids = read_ids_from_csv(self.TEST_CSV)
             self.assertEqual(ids[0], self.TEST_ID)
 
     def test_read_hpa_image(self):
         runner = CliRunner()
         with runner.isolated_filesystem():
-            save_test_images(self.TEST_ID, self.TEST_DIR)
+            create_test_images(self.TEST_ID, self.TEST_DIR)
             image = read_hpa_image(self.TEST_ID, self.TEST_DIR)
             self.assertEqual(image.shape, (10, 10, 4))
 
     def test_compress_single_image(self):
-        """ Robustness check. Might be important in the future, when creating
-            predictions for single images.
-        """
         runner = CliRunner()
         with runner.isolated_filesystem():
-            save_test_ids_to_test_csv(self.TEST_ID, self.TEST_CSV)
-            save_test_images(self.TEST_ID, self.TEST_DIR)
+            create_test_csv_from_ids(self.TEST_ID, self.TEST_CSV)
+            create_test_images(self.TEST_ID, self.TEST_DIR)
             result = runner.invoke(compress_dataset,
                                    [self.TEST_CSV, self.TEST_DIR, self.TEST_OUTPUT])
             self.assertEqual(result.exit_code, 0)
@@ -72,8 +69,8 @@ class TestCompressDataset(unittest.TestCase):
     def test_compress_dataset(self):
         runner = CliRunner()
         with runner.isolated_filesystem():
-            save_test_ids_to_test_csv(self.TEST_IDS, self.TEST_CSV)
-            save_test_images(self.TEST_IDS, self.TEST_DIR)
+            create_test_csv_from_ids(self.TEST_IDS, self.TEST_CSV)
+            create_test_images(self.TEST_IDS, self.TEST_DIR)
             result = runner.invoke(compress_dataset,
                                    [self.TEST_CSV, self.TEST_DIR, self.TEST_OUTPUT])
             self.assertEqual(result.exit_code, 0)
