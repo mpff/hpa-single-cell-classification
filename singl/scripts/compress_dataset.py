@@ -1,33 +1,8 @@
 # -*- coding: utf-8 -*-
 import click
 import logging
-import os
-
-import numpy
-import pandas
-
 import h5py
-
-from skimage import io
-
-
-def read_ids_from_csv(csv_file):
-    """ Reads a column named 'ID' from csv_file. This function was
-        created to make sure basic I/O works in unit testing.
-    """
-    csv = pandas.read_csv(csv_file)
-    return csv.ID
-
-
-def read_hpa_image(image_id, root_dir):
-    """ Reads a four channel HPA cell image given by 'image_id' from
-        'root_dir' and returns it as a (H x W x 4) numpy array.
-    """
-    root = os.path.join(root_dir, image_id)
-    stems = ("_red.png", "_blue.png", "_yellow.png", "_green.png")
-    paths = [root+stem for stem in stems]
-    image = [io.imread(path) for path in paths]
-    return numpy.dstack(image)
+import singl
 
 
 @click.command()
@@ -53,7 +28,7 @@ def compress_dataset(csv_file, root_dir, output_file):
     logger.info('Compressing images into single hd5f file.')
 
     logger.info(f'Read image IDs from {csv_file}.')
-    ids = read_ids_from_csv(csv_file)
+    ids = singl.utils.read_ids_from_csv(csv_file)
 
     logger.info(f'Opening {output_file}.')
     with h5py.File(output_file, "w") as db:
@@ -62,7 +37,7 @@ def compress_dataset(csv_file, root_dir, output_file):
         for i, image_id in ids.iteritems():
 
             logger.info(f'Compressing {image_id} ({i}/{len(ids)})')
-            image = read_hpa_image(image_id, root_dir)
+            image = singl.utils.read_hpa_image(image_id, root_dir)
 
             db.create_dataset(
                 name=image_id,
